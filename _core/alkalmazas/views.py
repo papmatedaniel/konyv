@@ -3,6 +3,9 @@ from .models import Konyvek, Szerzok, Mufajok
 # from django.shortcuts import get_object_or_404
 # from .forms import KonyvekForm
 from django.contrib.auth.decorators import login_required
+import os
+from django.conf import settings
+
 
 
 def index(request):
@@ -22,7 +25,7 @@ def hozzad(request):
         oldalszam = request.POST.get('oldalszam')
         kotes_tipus = request.POST.get('kotes')
         leiras = request.POST.get('leiras')
-        # borito_kep = request.FILES.get('borito_kep')
+        boritokep = request.FILES.get('boritokep')
 
         # oldalszam = int(oldalszam) if oldalszam else None
         # kiadas_eve = int(kiadas_eve) if kiadas_eve else None
@@ -38,7 +41,7 @@ def hozzad(request):
             oldalszam=oldalszam,
             kotes_tipus=kotes_tipus,
             leiras=leiras,
-            # borito_kep=borito_kep
+            boritokep=boritokep
         )
         konyv.szerzok.add(szerzo)
         konyv.mufajok.add(mufaj)
@@ -71,6 +74,12 @@ def szerkeszt_konyv(request, konyv_id):
     kezdo_szerzok = ", ".join([szerzo.szerzo for szerzo in konyv.szerzok.all()])
     kezdo_mufajok = ", ".join([mufaj.mufaj for mufaj in konyv.mufajok.all()])
 
+    # if 'torol_boritokep' in request.POST:
+    #     if konyv.boritokep:
+    #         konyv.boritokep.delete()  # Kép törlése a media mappából
+    #         konyv.boritokep = None
+
+
     if request.method == "POST":
         # Cím és opcionális mezők frissítése
         konyv.cim = request.POST.get('cim', konyv.cim)
@@ -80,6 +89,11 @@ def szerkeszt_konyv(request, konyv_id):
         konyv.oldalszam = request.POST.get('oldalszam', konyv.oldalszam)
         konyv.kotes_tipus = request.POST.get('kotes', konyv.kotes_tipus)
         konyv.leiras = request.POST.get('leiras', konyv.leiras)
+
+        boritokep = request.FILES.get('boritokep')
+        if boritokep:
+            konyv.boritokep = boritokep
+
         konyv.save()
 
         # Szerzők frissítése (vesszővel elválasztott szöveg feldolgozása)
@@ -112,11 +126,16 @@ def szerkeszt_konyv(request, konyv_id):
 
 @login_required
 def torol_konyv(request, konyv_id):
-    print("Törlés nézet meghívva")  # Hibakeresés
     konyv = get_object_or_404(Konyvek, id=konyv_id)
     if request.method == "POST":
-        print("POST kérés érkezett")  # Hibakeresés
+        # Ha van borítókép, töröljük a fájlrendszerből
+        if konyv.boritokep:
+            kep_eleresi_ut = os.path.join(settings.MEDIA_ROOT, str(konyv.boritokep))
+            if os.path.exists(kep_eleresi_ut):
+                os.remove(kep_eleresi_ut)
         konyv.delete()
-        print("Könyv törölve")  # Hibakeresés
         return redirect('adatok')
     return redirect('szerkeszt_konyv', konyv_id=konyv_id)
+
+
+

@@ -72,10 +72,34 @@
                         <label for="leiras" class="form-label">Leírás/Összegzés</label>
                         <textarea class="form-control" name="leiras" id="leiras" rows="3">{{ konyv.leiras|default:'' }}</textarea>
                     </div>
-                    <!-- <div class="mb-3">
+                    <div class="mb-3">
                         <label for="boritokep" class="form-label">Borító kép</label>
                         <input type="file" class="form-control" name="boritokep" id="boritokep">
-                    </div> -->
+                    </div>
+                    
+                    <!-- <div class="mb-3">
+                        <label for="boritokep" class="form-label">Borító kép</label>
+                         -->
+                        <!-- Ha már van feltöltött kép, jelenítsük meg -->
+                        <!-- {% if konyv.boritokep %}
+                            <div id="boritokep-preview-container">
+                                <img id="boritokep-preview" src="{{ konyv.boritokep.url }}" alt="Borító kép" class="img-thumbnail mb-2" style="max-width: 200px; display: block;">
+                            </div>
+                        {% endif %} -->
+                    
+                        <!-- Fájlfeltöltő mező -->
+                        <!-- <input type="file" class="form-control" name="boritokep" id="boritokep" accept="image/*">
+                    </div>                    
+                    {% if konyv.boritokep %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="torol_boritokep" id="torol_boritokep">
+                        <label class="form-check-label" for="torol_boritokep">Borítókép eltávolítása</label>
+                    </div>
+                    {% endif %} -->
+                
+                    
+                
+                    
                 </div>
                 <div class="d-grid gap-2 mt-4">
                     <button type="submit" class="btn btn-success">Mentés</button>
@@ -103,6 +127,46 @@
     //     const hasData = {% if konyv.kiadas_eve or konyv.kiado or konyv.nyelv or konyv.oldalszam or konyv.kotes_tipus or konyv.leiras %}true{% else %}false{% endif %};
     //     optionalFields.style.display = hasData ? 'block' : 'none';
     // });
+
+
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const previewContainer = document.getElementById("boritokep-preview-container");
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                let preview = document.getElementById("boritokep-preview");
+                
+                if (!preview) {
+                    preview = document.createElement("img");
+                    preview.id = "boritokep-preview";
+                    preview.className = "img-thumbnail mb-2";
+                    preview.style.maxWidth = "200px";
+                    previewContainer.appendChild(preview);
+                }
+                
+                preview.src = e.target.result;
+
+                let removeBtn = document.querySelector("#boritokep-preview-container button");
+                if (!removeBtn) {
+                    removeBtn = document.createElement("button");
+                    removeBtn.className = "btn btn-danger btn-sm";
+                    removeBtn.textContent = "Kép eltávolítása";
+                    removeBtn.type = "button";
+                    removeBtn.onclick = removeImage;
+                    previewContainer.appendChild(removeBtn);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function removeImage() {
+        document.getElementById("boritokep").value = "";
+        const previewContainer = document.getElementById("boritokep-preview-container");
+        previewContainer.innerHTML = "";
+    }
 
     function toggleOptionalFields() {
         const optionalFields = document.getElementById("optional-fields");

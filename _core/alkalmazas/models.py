@@ -28,7 +28,7 @@ class Konyvek(models.Model):
     oldalszam = models.CharField(max_length=20, blank=True)
     kotes_tipus = models.CharField(max_length=50, null=True, blank=True)
     leiras = models.TextField(null=True, blank=True)
-    # borito_kep = models.ImageField(upload_to='boritokepek/', null=True, blank=True)
+    boritokep = models.ImageField(upload_to='borito_kepek/', null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Konyvek"

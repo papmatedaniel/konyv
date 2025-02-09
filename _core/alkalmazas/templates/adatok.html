@@ -14,6 +14,7 @@
                 <th>Oldalszám</th>
                 <th>Kötés</th>
                 <th>Leírás</th>
+                <th>Borító</th>
                 <th>Műveletek</th>
             </tr>
         </thead>
@@ -37,6 +38,16 @@
                 <td>{{  konyv.oldalszam  }}</td>
                 <th>{{  konyv.kotes_tipus}}</th>
                 <th>{{  konyv.leiras  }}</th>
+                {% if konyv.boritokep %}
+                    <th>
+                        <img src="{{ konyv.boritokep.url }}" alt="{{ konyv.cim }}" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                        <!-- <th>Nincs borítókép</th> -->
+                    </th>
+                {% else %}
+                    <th>Nincs borítókép</th>
+                {% endif %}
+
+  
                 <td>
                     <a href="{% url 'szerkeszt_konyv' konyv.id %}">Szerkesztés</a>
                 </td>
