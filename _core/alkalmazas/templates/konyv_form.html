@@ -80,19 +80,18 @@
                 <div class="d-grid gap-2 mt-4">
                     <button type="submit" class="btn btn-success">Mentés</button>
                     <a href="{% url 'adatok' %}" class="btn btn-secondary">Mégse</a>
-                    
-                    <!-- Törlés gomb csak szerkesztés oldalon -->
-                    {% if 'szerkeszt' in request.path %}
-                        <form method="post" action="{% url 'torol_konyv' konyv.id %}" class="mt-2">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger w-100" 
-                                    onclick="return confirm('Biztosan törölni szeretnéd ezt a könyvet?')">
-                                Könyv törlése
-                            </button>
-                        </form>
-                    {% endif %}
                 </div>
             </form>
+            <!-- Törlés gomb csak szerkesztés oldalon -->
+            {% if 'szerkeszt' in request.path %}
+            <form method="post" action="{% url 'torol_konyv' konyv.id %}" class="mt-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger w-100" 
+                        onclick="return confirm('Biztosan törölni szeretnéd ezt a könyvet?')">
+                    Könyv törlése
+                </button>
+            </form>
+            {% endif %}
         </div>
     </div>
 </div>
