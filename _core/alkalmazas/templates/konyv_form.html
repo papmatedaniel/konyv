@@ -1,0 +1,112 @@
+<!-- alkalmazas/templates/konyv_form.html -->
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0 text-center">{{ form_cim }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="cim" class="form-label">Könyv címe</label>
+                    <input type="text" class="form-control" name="cim" id="cim" value="{{ konyv.cim }}" required>
+                </div>
+
+                <!-- Szerzők (több érték támogatása) -->
+                <div class="mb-3">
+                    <label for="szerzo" class="form-label">Szerző(k)</label>
+                    <input list="szerzok-list" class="form-control" name="szerzo" 
+                           value="{{ kezdo_szerzok }}" multiple required>
+                    <datalist id="szerzok-list">
+                        {% for szerzo in szerzok %}
+                            <option value="{{ szerzo.szerzo }}">
+                        {% endfor %}
+                    </datalist>
+                    <small class="text-muted">Több szerzőt vesszővel válassz el.</small>
+                </div>
+
+                <!-- Műfajok (több érték támogatása) -->
+                <div class="mb-3">
+                    <label for="mufaj" class="form-label">Műfaj(ok)</label>
+                    <input list="mufajok-list" class="form-control" name="mufaj" 
+                           value="{{ kezdo_mufajok }}" multiple required>
+                    <datalist id="mufajok-list">
+                        {% for mufaj in mufajok %}
+                            <option value="{{ mufaj.mufaj }}">
+                        {% endfor %}
+                    </datalist>
+                    <small class="text-muted">Több műfajt vesszővel válassz el.</small>
+                </div>
+
+                <button type="button" class="btn btn-secondary mb-3" onclick="toggleOptionalFields()">Opcionális adatok</button>
+
+                <!-- <div id="optional-fields" style="display: {% if konyv.kiadas_eve or konyv.kiado or konyv.nyelv or konyv.oldalszam or konyv.kotes_tipus or konyv.leiras %}block{% else %}none{% endif %};"> -->
+                <div id="optional-fields" style="display: none;">
+                    <div class="mb-3">
+                        <label for="kiadas_ev" class="form-label">Kiadás éve</label>
+                        <input type="number" class="form-control" name="kiadas_ev" id="kiadas_ev" value="{{ konyv.kiadas_eve|default:'' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="kiado" class="form-label">Kiadó neve</label>
+                        <input type="text" class="form-control" name="kiado" id="kiado" value="{{ konyv.kiado|default:'' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="nyelv" class="form-label">Nyelv</label>
+                        <input type="text" class="form-control" name="nyelv" id="nyelv" value="{{ konyv.nyelv|default:'' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="oldalszam" class="form-label">Oldalszám</label>
+                        <input type="number" class="form-control" name="oldalszam" id="oldalszam" value="{{ konyv.oldalszam|default:'' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="kotes" class="form-label">Kötés típusa</label>
+                        <select class="form-select" name="kotes" id="kotes">
+                            <option value="">Válassz...</option>
+                            <option value="Puha kötés" {% if konyv.kotes_tipus == "Puha kötés" %}selected{% endif %}>Puha kötés</option>
+                            <option value="Keménytáblás" {% if konyv.kotes_tipus == "Keménytáblás" %}selected{% endif %}>Keménytáblás</option>
+                            <option value="Fűzött" {% if konyv.kotes_tipus == "Fűzött" %}selected{% endif %}>Fűzött</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="leiras" class="form-label">Leírás/Összegzés</label>
+                        <textarea class="form-control" name="leiras" id="leiras" rows="3">{{ konyv.leiras|default:'' }}</textarea>
+                    </div>
+                    <!-- <div class="mb-3">
+                        <label for="boritokep" class="form-label">Borító kép</label>
+                        <input type="file" class="form-control" name="boritokep" id="boritokep">
+                    </div> -->
+                </div>
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-success">Mentés</button>
+                    <a href="{% url 'adatok' %}" class="btn btn-secondary">Mégse</a>
+                    
+                    <!-- Törlés gomb csak szerkesztés oldalon -->
+                    {% if 'szerkeszt' in request.path %}
+                        <form method="post" action="{% url 'torol_konyv' konyv.id %}" class="mt-2">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger w-100" 
+                                    onclick="return confirm('Biztosan törölni szeretnéd ezt a könyvet?')">
+                                Könyv törlése
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // opcionális adatok megjelenítése oldal betöltésekor
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     const optionalFields = document.getElementById('optional-fields');
+    //     const hasData = {% if konyv.kiadas_eve or konyv.kiado or konyv.nyelv or konyv.oldalszam or konyv.kotes_tipus or konyv.leiras %}true{% else %}false{% endif %};
+    //     optionalFields.style.display = hasData ? 'block' : 'none';
+    // });
+
+    function toggleOptionalFields() {
+        const optionalFields = document.getElementById("optional-fields");
+        optionalFields.style.display = optionalFields.style.display === "none" ? "block" : "none";
+    }
+</script>

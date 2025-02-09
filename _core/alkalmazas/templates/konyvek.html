@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block tartalom %}
+    <table class="table shadow">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>Cím</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for konyv in konyvek %}
+                <tr>
+                    <td>{{ konyv.id }}</td>
+                    <td>{{ konyv.cim }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock tartalom %}

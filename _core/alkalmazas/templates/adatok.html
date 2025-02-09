@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block tartalom %}
+    <h1>Könyvek tulajdonságai</h1>
+    <table class="table shadow">
+        <thead>
+            <tr>
+                <th>Cím</th>
+                <th>Szerzők</th>
+                <th>Műfaj</th>
+                <th>Kiadás éve</th>
+                <th>Kiadó</th>
+                <th>Nyelv</th>
+                <th>Oldalszám</th>
+                <th>Kötés</th>
+                <th>Leírás</th>
+                <th>Műveletek</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for konyv in konyvek %}
+            <tr>
+                <td>{{ konyv.cim }}</td>
+                <td>
+                    {% for szerzo in konyv.szerzok.all %}
+                        {{ szerzo.szerzo }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for mufaj in konyv.mufajok.all %}
+                        {{ mufaj.mufaj }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{  konyv.kiadas_eve }}</td>
+                <td>{{  konyv.kiado  }}</td>
+                <td>{{  konyv.nyelv  }}</td>
+                <td>{{  konyv.oldalszam  }}</td>
+                <th>{{  konyv.kotes_tipus}}</th>
+                <th>{{  konyv.leiras  }}</th>
+                <td>
+                    <a href="{% url 'szerkeszt_konyv' konyv.id %}">Szerkesztés</a>
+                </td>
+                
+
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock tartalom %}
